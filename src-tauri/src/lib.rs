@@ -32,6 +32,7 @@ pub fn run() {
             window_minimize,
             window_maximize,
             window_close,
+            window_start_dragging,
             // Mods
             mods::mods_scan,
             mods::mods_toggle,
@@ -102,6 +103,11 @@ fn window_maximize(window: tauri::Window) {
 #[tauri::command]
 fn window_close(window: tauri::Window) {
     let _ = window.close();
+}
+
+#[tauri::command]
+fn window_start_dragging(window: tauri::Window) {
+    let _ = window.start_dragging();
 }
 
 // ── Shell commands ──

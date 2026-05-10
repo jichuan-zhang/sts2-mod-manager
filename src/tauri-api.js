@@ -49,6 +49,7 @@ window.api = {
   minimize: () => invoke('window_minimize'),
   maximize: () => invoke('window_maximize'),
   close: () => invoke('window_close'),
+  startDragging: () => invoke('window_start_dragging'),
 
   // Mods
   scanMods: () => invoke('mods_scan'),
