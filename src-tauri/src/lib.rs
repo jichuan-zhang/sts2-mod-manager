@@ -142,9 +142,28 @@ fn shell_open_logs_dir() {
 #[tauri::command]
 fn shell_open_saves_dir() {
     if let Some(appdata) = get_appdata_dir() {
-        let saves_dir = appdata.join("SlayTheSpire2");
-        if saves_dir.exists() {
-            let _ = opener::open(saves_dir.to_string_lossy().to_string());
+        let steam_dir = appdata.join("SlayTheSpire2").join("steam");
+
+        // STS2 saves live at steam/<steamid>/. If exactly one account
+        // folder is present, open it directly; otherwise fall back to
+        // steam/ and let the user pick.
+        let target = std::fs::read_dir(&steam_dir)
+            .ok()
+            .and_then(|entries| {
+                let mut dirs = entries
+                    .filter_map(|e| e.ok())
+                    .filter(|e| e.file_type().map(|t| t.is_dir()).unwrap_or(false));
+                let first = dirs.next()?;
+                if dirs.next().is_some() {
+                    None
+                } else {
+                    Some(first.path())
+                }
+            })
+            .unwrap_or(steam_dir);
+
+        if target.exists() {
+            let _ = opener::open(target.to_string_lossy().to_string());
         }
     }
 }
