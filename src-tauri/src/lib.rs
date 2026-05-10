@@ -107,7 +107,7 @@ fn window_close(window: tauri::Window) {
 // ── Shell commands ──
 
 fn get_appdata_dir() -> Option<std::path::PathBuf> {
-    dirs::config_dir()
+    dirs::data_dir()
 }
 
 #[tauri::command]
