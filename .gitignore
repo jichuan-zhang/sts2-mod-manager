@@ -18,3 +18,4 @@ builds/
 
 # Temp screenshots (hash-named)
 /[0-9a-f][0-9a-f][0-9a-f]*.png
+src-tauri/gen/schemas/
