@@ -12,7 +12,7 @@ pub struct LogsResult {
 }
 
 fn get_logs_dir() -> Option<std::path::PathBuf> {
-    let appdata = dirs::data_dir()?;
+    let appdata = crate::get_appdata_dir()?;
     let dir = appdata.join("SlayTheSpire2").join("logs");
     if dir.exists() {
         Some(dir)

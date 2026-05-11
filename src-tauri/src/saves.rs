@@ -75,7 +75,7 @@ pub struct SimpleResult {
 }
 
 fn get_appdata() -> Option<PathBuf> {
-    dirs::data_dir()
+    crate::get_appdata_dir()
 }
 
 fn get_steam_user_dir() -> Option<PathBuf> {

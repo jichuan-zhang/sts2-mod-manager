@@ -10,6 +10,8 @@ mod translations;
 use std::sync::Mutex;
 use tauri::Manager;
 
+const STS2_STEAM_APPID: &str = "2868840";
+
 pub struct AppState {
     pub game_path: Mutex<Option<String>>,
     pub game_state: Mutex<String>, // "idle" | "launching" | "running"
@@ -112,8 +114,29 @@ fn window_start_dragging(window: tauri::Window) {
 
 // ── Shell commands ──
 
-fn get_appdata_dir() -> Option<std::path::PathBuf> {
+// Returns the AppData root containing STS2's user data directory.
+// On Linux, prefers the Proton compatdata prefix when one exists for
+// STS2 — mods only function via the Windows build under Proton, so
+// real user data lives there. Falls back to the native platform data
+// dir otherwise. On Windows, the fallback returns %APPDATA% as before.
+pub fn get_appdata_dir() -> Option<std::path::PathBuf> {
+    if let Some(proton) = proton_appdata_root() {
+        return Some(proton);
+    }
     dirs::data_dir()
+}
+
+fn proton_appdata_root() -> Option<std::path::PathBuf> {
+    let cfg = crate::config::load_config();
+    let game_path = cfg.game_path?;
+    let game_path = std::path::Path::new(&game_path);
+    // <steamlib>/steamapps/common/Slay the Spire 2/  →  <steamlib>/steamapps/
+    let steamapps = game_path.parent()?.parent()?;
+    let proton = steamapps
+    .join("compatdata")
+    .join(STS2_STEAM_APPID)
+    .join("pfx/drive_c/users/steamuser/AppData/Roaming");
+    proton.exists().then_some(proton)
 }
 
 #[tauri::command]
